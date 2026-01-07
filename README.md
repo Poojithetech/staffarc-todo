@@ -141,8 +141,21 @@ Base URL: `/api/tasks/`
 ### 📝 Adding a New Task
 ![Add Task](assets/Screenshot%202026-01-07%20170134.png)
 
+
 ### ✏️ Editing & Saving a Task
 ![Edit Task](assets/Screenshot%202026-01-07%20170146.png)
+
+### ✅ Marking Task as Completed & Time Estimation
+![Completed Task](assets/Screenshot%202026-01-07%20170159.png)
+
+
+=======
+---
+
+### ✏️ Editing & Saving a Task
+![Edit Task](assets/Screenshot%202026-01-07%20170146.png)
+
+---
 
 ### ✅ Marking Task as Completed & Time Estimation
 ![Completed Task](assets/Screenshot%202026-01-07%20170159.png)
@@ -154,6 +167,19 @@ Base URL: `/api/tasks/`
 * Filter tasks by completed / pending status
 * Add user authentication
 * Improve UI animations and notifications
+
+---
+
+🚀 Project Showcase
+=======
+This project is a full-stack ToDo application featuring a **Black & Blush** aesthetic, built with **Django REST Framework** for the API and **React** for the frontend UI. It implements full CRUD (Create, Read, Update, Delete) functionality.
+
+### Key Features Implemented:
+
+* **Full CRUD:** Create, edit, toggle completion, and delete tasks.
+* **Time Tracking:** Ability to add and edit **Estimated Hours** for each task.
+* **Modern UI:** A sleek, dark "Black & Blush" theme.
+* **Persistent Data:** Tasks are stored in the Django backend database.
 
 ---
 
