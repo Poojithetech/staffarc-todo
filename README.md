@@ -132,7 +132,9 @@ Base URL: `/api/tasks/`
 3. Open a browser and go to **[http://localhost:3000](http://localhost:3000)**
 4. Create a new task using the input form
 5. Toggle task completion using the checkbox
-6. Delete tasks using the delete button
+6. Editing the task by clicking on the edit option and saving the changes
+7. A time estimation block is provided to complete the task
+8. Delete tasks using the delete button
 
 ---
 
