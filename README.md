@@ -139,14 +139,43 @@ Base URL: `/api/tasks/`
 ---
 
 ## 7️⃣ Future Improvements
-
-* Edit task title and description
 * Filter tasks by completed / pending status
 * Add user authentication
 * Improve UI animations and notifications
 
 ---
+## 🚀 Project Showcase
 
+This project is a full-stack ToDo application featuring a **Black & Blush** aesthetic, built with **Django REST Framework** for the API and **React** for the frontend UI. It implements full CRUD (Create, Read, Update, Delete) functionality.
+
+### Key Features Implemented:
+
+* **Full CRUD:** Create, edit, toggle completion, and delete tasks.
+* **Time Tracking:** Ability to add and edit **Estimated Hours** for each task.
+* **Modern UI:** A sleek, dark "Black & Blush" theme.
+* **Persistent Data:** Tasks are stored in the Django backend database.
+
+---
+
+### Application Screenshots
+
+#### 1. Task Creation and Home View
+
+The main page displays the task list and the input form, which now includes the field for Estimated Hours.
+
+![Screenshot of the main Black & Blush ToDo App interface, showing the creation form with Estimated Hours input](assets/Screenshot 2026-01-07 170134.png)
+
+#### 2. Task View and Completion Toggle
+
+Tasks are displayed with the title, description, and the estimated time. Completion status is marked by the checkbox and border style.
+
+![Screenshot of the task list showing two tasks with Estimated Time displayed in gold](assets/Screenshot 2026-01-07 170159.png)
+
+#### 3. Edit Mode and Enhanced Window
+
+The edit feature allows modifying the Title, Description (with an enhanced, larger window), and the Estimated Hours, saved via the **Save** button.
+
+![Screenshot of a task in Edit Mode, showing inputs for Title, the larger Description textarea, and the Estimated Hours input](assets/Screenshot 2026-01-07 170146.png)
 ## ✅ Submission Confirmation
 
 This project satisfies all requirements outlined in the **STAFFARC Full-Stack Mini Project Assignment**, including CRUD functionality, persistent storage, API integration, and proper documentation.
