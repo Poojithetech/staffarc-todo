@@ -1,9 +1,8 @@
 from rest_framework import serializers
-from .models import Task
+from .models import Task # Ensure this import is here
 
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        # fields must match the model
-        fields = ('id', 'title', 'description', 'completed', 'date_created') # <-- CORRECTED FIELD NAME
-        read_only_fields = ('date_created',) # <-- CORRECTED FIELD NAME
+        # CORRECT: Remove 'date_created' and ADD 'estimated_hours'
+        fields = ('id', 'title', 'description', 'completed', 'estimated_hours')

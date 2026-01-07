@@ -4,5 +4,6 @@ from .serializers import TaskSerializer
 
 class TaskViewSet(viewsets.ModelViewSet):
     # order_by must match the model
-    queryset = Task.objects.all().order_by('-date_created') # <-- CORRECTED FIELD NAME
+    queryset = Task.objects.all().order_by('-id')
+    # <-- CORRECTED FIELD NAME
     serializer_class = TaskSerializer
