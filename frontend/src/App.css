@@ -6,6 +6,9 @@
   --text-color: #ffffff;
   --shadow-color: rgba(0, 0, 0, 0.7); /* Strong shadows for 3D depth */
   --input-bg: #3c3c3c;
+  --success-color: #4CAF50; /* Green for Save/Completed */
+  --danger-color: #f44336; /* Red for Delete */
+  --warning-color: #ffd700; /* Gold for Time/Deadline */
 }
 
 body {
@@ -49,6 +52,9 @@ body {
   margin: 40px auto;
   box-shadow: 0 10px 20px var(--shadow-color); /* Deep shadow */
   border: 1px solid #444;
+  display: flex; /* Added for layout */
+  flex-direction: column; /* Added for layout */
+  gap: 15px; /* Spacing between form elements */
 }
 
 .task-form h2 {
@@ -61,7 +67,8 @@ body {
 
 /* Form Elements */
 .task-form input[type="text"],
-.task-form textarea {
+.task-form textarea,
+.task-form input[type="number"] { /* ADDED number input */
   width: 100%;
   padding: 15px;
   border: 1px solid #555;
@@ -73,8 +80,14 @@ body {
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
+/* ENHANCEMENT: Increase description size for better visibility */
+.task-form textarea {
+    min-height: 90px;
+}
+
 .task-form input:focus,
-.task-form textarea:focus {
+.task-form textarea:focus,
+.task-form input[type="number"]:focus { /* ADDED number input focus */
   border-color: var(--accent-color);
   box-shadow: 0 0 10px var(--accent-color); /* Glow effect */
   outline: none;
@@ -98,13 +111,197 @@ body {
   transform: translateY(-2px);
 }
 
-/* Task List */
+/* --- Task List & Item Styling --- */
 .task-list {
   max-width: 600px;
   margin: 0 auto;
+  list-style: none; /* Ensure no bullets */
+  padding: 0;
 }
 
-/* Error Message Styling */
+.task-item {
+    display: flex;
+    align-items: flex-start; /* Align top for multi-line content */
+    justify-content: space-between;
+    background-color: var(--secondary-bg);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+    border-left: 5px solid var(--accent-color);
+    transition: all 0.3s ease;
+}
+
+.task-item:hover {
+    box-shadow: 0 0 15px var(--accent-color); /* Subtle glow on hover */
+    transform: translateY(-1px);
+}
+
+.task-item.completed {
+    opacity: 0.7;
+    border-left-color: var(--success-color);
+}
+
+.task-item.completed h3,
+.task-item.completed p {
+    text-decoration: line-through;
+    color: #999;
+}
+
+.task-content {
+    flex-grow: 1;
+    margin-left: 15px;
+    text-align: left;
+}
+
+.task-content h3 {
+    margin: 0 0 5px 0;
+    font-size: 1.2rem;
+    color: var(--text-color);
+}
+
+.task-content p {
+    margin: 0 0 5px 0;
+    font-size: 0.95rem;
+    color: #ccc;
+}
+
+/* Checkbox Styling */
+.task-item input[type="checkbox"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--accent-color);
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    outline: none;
+    flex-shrink: 0;
+    margin-top: 3px;
+}
+
+.task-item input[type="checkbox"]:checked {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.task-item input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--primary-bg);
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* --- Action Buttons (Delete, Edit, Save) --- */
+.task-actions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    margin-top: 3px;
+    gap: 10px;
+}
+
+.task-actions button {
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    font-weight: 600;
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+/* Delete Button */
+.task-actions .delete-btn {
+    background-color: var(--danger-color); /* Red */
+    color: var(--text-color);
+}
+
+.task-actions .delete-btn:hover {
+    background-color: #e53935;
+    transform: translateY(-2px);
+}
+
+/* Edit Button */
+.task-actions .edit-btn {
+    background-color: var(--accent-color);
+    color: var(--primary-bg);
+}
+
+.task-actions .edit-btn:hover {
+    background-color: #ff85c6;
+    transform: translateY(-2px);
+}
+
+/* Save Button */
+.task-actions .save-btn {
+    background-color: var(--success-color); /* Green (Success) */
+    color: var(--primary-bg);
+}
+
+.task-actions .save-btn:hover {
+    background-color: #6aab70;
+    transform: translateY(-2px);
+}
+
+
+/* --- Edit Mode Input Fields (TaskItem.js) --- */
+.task-content input[type="text"],
+.task-content textarea,
+.task-content input[type="number"] {
+    /* Apply common input styles for consistency */
+    border: 1px solid #555;
+    border-radius: 6px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    padding: 8px;
+    box-sizing: border-box;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.task-content .edit-title-input {
+    font-size: 1.2rem;
+    font-weight: bold;
+    width: 98%;
+}
+
+/* ENHANCEMENT: Increased size for edit description */
+.task-content .edit-description-input {
+    min-height: 90px; /* Increased size for better editing */
+    font-size: 0.95rem;
+    resize: vertical;
+    width: 98%;
+}
+
+/* NEW: Style for the Estimated Hours Input in Edit Mode */
+.task-content .edit-hours-input {
+    font-size: 0.9rem;
+    width: 150px; /* Specific width for the number field */
+    margin-top: 5px;
+}
+
+/* NEW: Style for the displayed hours */
+.task-hours {
+    font-weight: 600;
+    color: var(--warning-color) !important; /* Gold color for urgency/time */
+    font-size: 0.9rem !important;
+    margin-top: 5px !important;
+    text-decoration: none !important; /* Override line-through */
+}
+
+/* Style for disabled inputs/buttons while editing */
+input[disabled], button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Error Message Styling (Retained) */
 .error-message {
     color: #ffd700; /* Gold warning color */
     background-color: #4a0000;

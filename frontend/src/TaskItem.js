@@ -1,38 +1,33 @@
 import React, { useState } from 'react';
 
-// This component expects task data, and two handler functions from the parent (App.js)
 function TaskItem({ task, handleTaskUpdate, handleTaskDelete }) {
 
-    // State Management for Edit Mode and content while editing
     const [isEditing, setIsEditing] = useState(false);
     const [newTitle, setNewTitle] = useState(task.title);
     const [newDescription, setNewDescription] = useState(task.description);
+    // NEW: State for estimated hours (convert to string for input field)
+    const [newHours, setNewHours] = useState(task.estimated_hours.toString());
 
-    // Handler for toggling the completed status (existing functionality)
     const handleToggleCompleted = () => {
         handleTaskUpdate(task.id, { completed: !task.completed });
     };
 
-    // Handler for saving the new title/description via PATCH
     const handleSaveEdit = async () => {
-        // Validation: Ensure the title is not empty before saving
         if (!newTitle.trim()) {
             alert("Task title cannot be empty!");
             return;
         }
 
-        // Prepare the updated data payload
         const updatedTaskData = {
             title: newTitle.trim(),
             description: newDescription.trim(),
-            completed: task.completed, // Keep the existing completed status
+            completed: task.completed,
+            // NEW: Include the updated estimated_hours field
+            estimated_hours: parseFloat(newHours) || 0,
         };
 
         try {
-            // Call the parent handler to send the PATCH request to Django
             await handleTaskUpdate(task.id, updatedTaskData);
-
-            // Exit edit mode on success
             setIsEditing(false);
         } catch (error) {
             console.error("Error saving task:", error);
@@ -40,27 +35,16 @@ function TaskItem({ task, handleTaskUpdate, handleTaskDelete }) {
         }
     };
 
-    // Function to render either the Edit or Save button
     const renderEditButton = () => {
         if (isEditing) {
-            // If in Edit Mode, show the Save button
             return (
-                <button
-                    onClick={handleSaveEdit}
-                    className="save-btn"
-                    title="Save Changes"
-                >
+                <button onClick={handleSaveEdit} className="save-btn" title="Save Changes">
                     💾 Save
                 </button>
             );
         }
-        // If in View Mode, show the Edit button
         return (
-            <button
-                onClick={() => setIsEditing(true)}
-                className="edit-btn"
-                title="Edit Task"
-            >
+            <button onClick={() => setIsEditing(true)} className="edit-btn" title="Edit Task">
                 ✏️ Edit
             </button>
         );
@@ -74,7 +58,7 @@ function TaskItem({ task, handleTaskUpdate, handleTaskDelete }) {
                 type="checkbox"
                 checked={task.completed}
                 onChange={handleToggleCompleted}
-                disabled={isEditing} // Prevent toggling while editing the text
+                disabled={isEditing}
             />
 
             <div className="task-content">
@@ -94,24 +78,37 @@ function TaskItem({ task, handleTaskUpdate, handleTaskDelete }) {
                             placeholder="Description (Optional)"
                             className="edit-description-input"
                         />
+                         {/* NEW: Input for Estimated Hours */}
+                         <input
+                            type="number"
+                            step="0.01"
+                            value={newHours}
+                            onChange={(e) => setNewHours(e.target.value)}
+                            placeholder="Estimated Hours"
+                            className="edit-hours-input"
+                        />
                     </>
                 ) : (
                     // --- VIEW MODE: Render Text Display ---
                     <>
                         <h3 className="task-title">{task.title}</h3>
                         <p className="task-description">{task.description}</p>
+                        {/* NEW: Display Estimated Hours */}
+                        {task.estimated_hours > 0 && (
+                            <p className="task-hours">
+                                ⏳ Estimated Time: {task.estimated_hours} hours
+                            </p>
+                        )}
                     </>
                 )}
             </div>
 
             <div className="task-actions">
-                {/* The Edit/Save button will appear here */}
                 {renderEditButton()}
-
                 <button
                     onClick={() => handleTaskDelete(task.id)}
                     className="delete-btn"
-                    disabled={isEditing} // Cannot delete while editing
+                    disabled={isEditing}
                 >
                     🗑️ Delete
                 </button>

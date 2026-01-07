@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './App.css'; // Ensure your CSS is linked here
+import './App.css';
 import TaskItem from './TaskItem';
 
-// Set the base URL for the Django API
 const API_URL = "http://localhost:8000/api/tasks/";
 
 function App() {
     const [taskList, setTaskList] = useState([]);
     const [newTaskTitle, setNewTaskTitle] = useState('');
     const [newTaskDescription, setNewTaskDescription] = useState('');
+    const [newTaskHours, setNewTaskHours] = useState(''); // NEW: State for estimated hours
     const [error, setError] = useState(null);
 
     // --- 1. FETCH (Read) ---
@@ -20,7 +20,6 @@ function App() {
             setError(null);
         } catch (err) {
             console.error("Error fetching data:", err);
-            // Display connection error to the user
             setError("Cannot connect to Django Backend. Ensure the server is running on http://localhost:8000.");
         }
     };
@@ -41,15 +40,18 @@ function App() {
             title: newTaskTitle.trim(),
             description: newTaskDescription.trim(),
             completed: false,
+            // UPDATED: Include new estimated_hours field
+            estimated_hours: parseFloat(newTaskHours) || 0,
         };
 
         try {
             const response = await axios.post(API_URL, taskData);
-            // Add the new task to the local state
             setTaskList([...taskList, response.data]);
+
             // Clear input fields
             setNewTaskTitle('');
             setNewTaskDescription('');
+            setNewTaskHours(''); // UPDATED: Clear new hours field
             setError(null);
         } catch (err) {
             console.error("Error creating task:", err);
@@ -62,7 +64,6 @@ function App() {
         try {
             const response = await axios.patch(`${API_URL}${id}/`, updatedData);
 
-            // Update the task list in state with the modified task
             setTaskList(taskList.map(task =>
                 task.id === id ? response.data : task
             ));
@@ -81,7 +82,6 @@ function App() {
 
         try {
             await axios.delete(`${API_URL}${id}/`);
-            // Remove the task from the local state
             setTaskList(taskList.filter(task => task.id !== id));
             setError(null);
         } catch (err) {
@@ -95,7 +95,6 @@ function App() {
             <h1 className="app-title">Black & Blush ToDo List</h1>
 
             <div className="todo-container">
-                {/* Display connection error if present */}
                 {error && <div className="error-message">{error}</div>}
 
                 {/* Task Creation Form */}
@@ -110,6 +109,14 @@ function App() {
                         placeholder="Description (Optional)"
                         value={newTaskDescription}
                         onChange={(e) => setNewTaskDescription(e.target.value)}
+                    />
+                    {/* NEW: Input for Estimated Hours */}
+                    <input
+                        type="number"
+                        step="0.01"
+                        placeholder="Estimated Hours (e.g., 2.5)"
+                        value={newTaskHours}
+                        onChange={(e) => setNewTaskHours(e.target.value)}
                     />
                     <button type="submit">Add Task</button>
                 </form>
