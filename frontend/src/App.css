@@ -1,0 +1,116 @@
+/* Base Styles and Colors */
+:root {
+  --primary-bg: #1e1e1e; /* Deep Charcoal/Black */
+  --secondary-bg: #2d2d2d; /* Slightly lighter for containers */
+  --accent-color: #ff69b4; /* Hot Pink / Blush accent */
+  --text-color: #ffffff;
+  --shadow-color: rgba(0, 0, 0, 0.7); /* Strong shadows for 3D depth */
+  --input-bg: #3c3c3c;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--primary-bg);
+  color: var(--text-color);
+}
+
+.App {
+  text-align: center;
+  min-height: 100vh;
+  padding-bottom: 50px;
+}
+
+/* Header Styling */
+.App-header {
+  background-color: var(--secondary-bg);
+  padding: 40px 20px;
+  color: var(--accent-color);
+  box-shadow: 0 8px 15px var(--shadow-color); /* Deep shadow */
+  margin-bottom: 50px;
+  border-bottom: 5px solid var(--accent-color);
+}
+
+.App-header h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 5px var(--shadow-color); /* Text shadow for 3D look */
+}
+
+/* Form Container */
+.task-form {
+  background-color: var(--secondary-bg);
+  padding: 40px;
+  border-radius: 15px;
+  max-width: 600px;
+  margin: 40px auto;
+  box-shadow: 0 10px 20px var(--shadow-color); /* Deep shadow */
+  border: 1px solid #444;
+}
+
+.task-form h2 {
+  color: var(--accent-color);
+  margin-top: 0;
+  padding-bottom: 15px;
+  font-size: 2rem;
+  text-transform: uppercase;
+}
+
+/* Form Elements */
+.task-form input[type="text"],
+.task-form textarea {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #555;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 16px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.task-form input:focus,
+.task-form textarea:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 10px var(--accent-color); /* Glow effect */
+  outline: none;
+}
+
+.task-form button[type="submit"] {
+  background-color: var(--accent-color);
+  color: var(--primary-bg);
+  border: none;
+  padding: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: 700;
+  box-shadow: 0 4px 8px var(--shadow-color);
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.task-form button[type="submit"]:hover {
+  background-color: #ff85c6; /* Lighter pink on hover */
+  transform: translateY(-2px);
+}
+
+/* Task List */
+.task-list {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Error Message Styling */
+.error-message {
+    color: #ffd700; /* Gold warning color */
+    background-color: #4a0000;
+    padding: 10px;
+    border-radius: 4px;
+    margin: 20px auto;
+    max-width: 600px;
+    border: 1px solid #800000;
+}
