@@ -1,88 +1,123 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-const TaskItem = ({ task, onToggle, onDelete }) => {
+// This component expects task data, and two handler functions from the parent (App.js)
+function TaskItem({ task, handleTaskUpdate, handleTaskDelete }) {
+
+    // State Management for Edit Mode and content while editing
+    const [isEditing, setIsEditing] = useState(false);
+    const [newTitle, setNewTitle] = useState(task.title);
+    const [newDescription, setNewDescription] = useState(task.description);
+
+    // Handler for toggling the completed status (existing functionality)
+    const handleToggleCompleted = () => {
+        handleTaskUpdate(task.id, { completed: !task.completed });
+    };
+
+    // Handler for saving the new title/description via PATCH
+    const handleSaveEdit = async () => {
+        // Validation: Ensure the title is not empty before saving
+        if (!newTitle.trim()) {
+            alert("Task title cannot be empty!");
+            return;
+        }
+
+        // Prepare the updated data payload
+        const updatedTaskData = {
+            title: newTitle.trim(),
+            description: newDescription.trim(),
+            completed: task.completed, // Keep the existing completed status
+        };
+
+        try {
+            // Call the parent handler to send the PATCH request to Django
+            await handleTaskUpdate(task.id, updatedTaskData);
+
+            // Exit edit mode on success
+            setIsEditing(false);
+        } catch (error) {
+            console.error("Error saving task:", error);
+            alert("Failed to save task update.");
+        }
+    };
+
+    // Function to render either the Edit or Save button
+    const renderEditButton = () => {
+        if (isEditing) {
+            // If in Edit Mode, show the Save button
+            return (
+                <button
+                    onClick={handleSaveEdit}
+                    className="save-btn"
+                    title="Save Changes"
+                >
+                    💾 Save
+                </button>
+            );
+        }
+        // If in View Mode, show the Edit button
+        return (
+            <button
+                onClick={() => setIsEditing(true)}
+                className="edit-btn"
+                title="Edit Task"
+            >
+                ✏️ Edit
+            </button>
+        );
+    }
+
+
     return (
-        <div className="task-item" style={styles.taskItem}>
-            {/* Checkbox to toggle completion status */}
+        <div className={`task-item ${task.completed ? 'completed' : ''}`}>
+
             <input
                 type="checkbox"
                 checked={task.completed}
-                onChange={() => onToggle(task.id, !task.completed)}
-                style={styles.checkbox}
+                onChange={handleToggleCompleted}
+                disabled={isEditing} // Prevent toggling while editing the text
             />
 
-            {/* Title and date */}
-            <div style={styles.content}>
-                <span style={{ ...styles.title, ...(task.completed ? styles.completed : {}) }}>
-                    {task.completed ? '✅ ' : '❌ '} {task.title}
-                </span>
-                <small style={styles.date}>Created: {new Date(task.date_created).toLocaleDateString()}</small>
+            <div className="task-content">
+                {isEditing ? (
+                    // --- EDIT MODE: Render Input Fields ---
+                    <>
+                        <input
+                            type="text"
+                            value={newTitle}
+                            onChange={(e) => setNewTitle(e.target.value)}
+                            placeholder="Task Title"
+                            className="edit-title-input"
+                        />
+                        <textarea
+                            value={newDescription}
+                            onChange={(e) => setNewDescription(e.target.value)}
+                            placeholder="Description (Optional)"
+                            className="edit-description-input"
+                        />
+                    </>
+                ) : (
+                    // --- VIEW MODE: Render Text Display ---
+                    <>
+                        <h3 className="task-title">{task.title}</h3>
+                        <p className="task-description">{task.description}</p>
+                    </>
+                )}
             </div>
 
-            {/* Delete Button */}
-            <button
-                onClick={() => onDelete(task.id)}
-                style={styles.deleteButton}
-            >
-                🗑️ Delete
-            </button>
+            <div className="task-actions">
+                {/* The Edit/Save button will appear here */}
+                {renderEditButton()}
+
+                <button
+                    onClick={() => handleTaskDelete(task.id)}
+                    className="delete-btn"
+                    disabled={isEditing} // Cannot delete while editing
+                >
+                    🗑️ Delete
+                </button>
+            </div>
         </div>
     );
-};
-
-const styles = {
-    taskItem: {
-        display: 'flex',
-        alignItems: 'center',
-        padding: '20px 25px',
-        border: '1px solid #444',
-        borderRadius: '10px',
-        marginBottom: '15px',
-        justifyContent: 'space-between',
-        width: '100%',
-        maxWidth: '600px',
-        backgroundColor: '#2d2d2d', /* Secondary BG */
-        boxShadow: '0 5px 10px rgba(0, 0, 0, 0.5)', /* 3D Shadow */
-    },
-    checkbox: {
-        marginRight: '25px',
-        minWidth: '24px',
-        minHeight: '24px',
-        cursor: 'pointer',
-        accentColor: '#ff69b4', /* Pink accent for checkbox */
-    },
-    content: {
-        flexGrow: 1,
-        textAlign: 'left',
-    },
-    title: {
-        fontSize: '18px',
-        display: 'block',
-        color: '#ffffff', /* White text */
-        fontWeight: '600',
-    },
-    completed: {
-        textDecoration: 'line-through',
-        color: '#888', /* Greyed out when complete */
-        fontWeight: 'normal'
-    },
-    date: {
-        color: '#aaa',
-        fontSize: '12px',
-        marginTop: '5px'
-    },
-    deleteButton: {
-        backgroundColor: '#cc0000', /* Deep Red for Delete */
-        color: 'white',
-        border: 'none',
-        padding: '10px 18px',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        marginLeft: '20px',
-        fontSize: '14px',
-        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.5)',
-        transition: 'background-color 0.2s, transform 0.1s',
-    }
-};
+}
 
 export default TaskItem;

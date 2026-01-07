@@ -1,200 +1,259 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import TaskItem from './TaskItem';
-import './App.css';
+/*
+ * STAFFARC Black & Blush ToDo App Styles
+ * Complete CSS file including core theme and edit feature styles.
+ */
 
-const API_URL = 'http://127.0.0.1:8000/api/tasks/';
-
-function App() {
-  const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const [newTaskTitle, setNewTaskTitle] = useState('');
-  const [newTaskDesc, setNewTaskDesc] = useState('');
-
-  // 1. FETCH TASKS (R - Read)
-  const fetchTasks = async () => {
-    try {
-      const response = await axios.get(API_URL);
-      setTasks(response.data);
-      setLoading(false);
-      setError(null);
-    } catch (err) {
-      setError('Failed to fetch tasks from the API. Ensure the Django server is running.');
-      setLoading(false);
-      console.error(err);
-    }
-  };
-
-  // 2. CREATE TASK (C - Create)
-  const handleCreateTask = async (e) => {
-    e.preventDefault();
-
-    if (!newTaskTitle.trim()) return;
-
-    try {
-      const response = await axios.post(API_URL, {
-        title: newTaskTitle,
-        description: newTaskDesc,
-        completed: false,
-      });
-      setTasks([response.data, ...tasks]);
-      setNewTaskTitle('');
-      setNewTaskDesc('');
-    } catch (err) {
-      setError('Failed to create task.');
-      console.error(err);
-    }
-  };
-
-  // 3. TOGGLE TASK COMPLETION (U - Update)
-  const handleToggleTask = async (id, completedStatus) => {
-    try {
-      const response = await axios.patch(`${API_URL}${id}/`, {
-        completed: completedStatus,
-      });
-      setTasks(tasks.map(task => task.id === id ? response.data : task));
-    } catch (err) {
-      setError('Failed to update task status.');
-      console.error(err);
-    }
-  };
-
-  // 4. DELETE TASK (D - Delete)
-  const handleDeleteTask = async (id) => {
-    try {
-      await axios.delete(`${API_URL}${id}/`);
-      setTasks(tasks.filter(task => task.id !== id));
-    } catch (err) {
-      setError('Failed to delete task.');
-      console.error(err);
-    }
-  };
-
-  useEffect(() => {
-    fetchTasks();
-  }, []);
-
-  if (loading) return <div className="App" style={{color: '#4CAF50'}}>Loading tasks...</div>;
-
-  return (
-    <div className="App" style={styles.appContainer}>
-      <header style={styles.header}>
-        <h1 style={styles.mainTitle}>StaffArc ToDo List</h1>
-      </header>
-
-      {error && <div style={styles.errorMessage}>⚠️ {error}</div>}
-
-      {/* Task Creation Form */}
-      <div className="task-form" style={styles.formContainer}>
-        <h2 style={{color: '#0056b3'}}>Add New Task</h2>
-        <form onSubmit={handleCreateTask} style={styles.form}>
-            <input
-                type="text"
-                value={newTaskTitle}
-                onChange={(e) => setNewTaskTitle(e.target.value)}
-                placeholder="Task Title (Required)"
-                required
-                style={styles.input}
-            />
-            <textarea
-                value={newTaskDesc}
-                onChange={(e) => setNewTaskDesc(e.target.value)}
-                placeholder="Description (Optional)"
-                rows="3"
-                style={styles.textarea}
-            />
-            <button type="submit" style={styles.submitButton}>Add Task</button>
-        </form>
-      </div>
-
-      {/* Task List */}
-      <div className="task-list" style={styles.listContainer}>
-        {tasks.length === 0 ? (
-          <p style={{color: '#6c757d'}}>You have no tasks yet. Use the form above to add one!</p>
-        ) : (
-          tasks.map(task => (
-            <TaskItem
-              key={task.id}
-              task={task}
-              onToggle={handleToggleTask}
-              onDelete={handleDeleteTask}
-            />
-          ))
-        )}
-      </div>
-    </div>
-  );
+:root {
+    --color-black: #1a1a1a;
+    --color-dark-gray: #2c2c2c;
+    --color-light-gray: #d3d3d3;
+    --color-blush: #ff69b4;
+    --color-white: #f8f8f8;
+    --color-success: #4CAF50;
+    --color-danger: #f44336;
 }
 
-const styles = {
-    appContainer: {
-        backgroundColor: '#f4f7f6', // Light background
-        minHeight: '100vh',
-        paddingBottom: '50px'
-    },
-    header: {
-        backgroundColor: '#007bff', // Primary blue header
-        padding: '20px',
-        color: 'white',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-    },
-    mainTitle: {
-        marginBottom: '0',
-    },
-    errorMessage: {
-        color: '#dc3545',
-        backgroundColor: '#f8d7da',
-        padding: '10px',
-        borderRadius: '4px',
-        maxWidth: '600px',
-        margin: '20px auto',
-        border: '1px solid #f5c6cb'
-    },
-    formContainer: {
-        marginBottom: '40px',
-        padding: '30px',
-        border: '1px solid #e9ecef',
-        borderRadius: '8px',
-        maxWidth: '600px',
-        margin: '30px auto',
-        backgroundColor: 'white',
-        boxShadow: '0 0 15px rgba(0, 0, 0, 0.05)'
-    },
-    form: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '15px',
-    },
-    input: {
-        padding: '12px',
-        border: '1px solid #ced4da',
-        borderRadius: '4px',
-        fontSize: '16px',
-    },
-    textarea: {
-        padding: '12px',
-        border: '1px solid #ced4da',
-        borderRadius: '4px',
-        fontSize: '16px',
-        resize: 'vertical',
-    },
-    submitButton: {
-        backgroundColor: '#28a745', // Green for Submit
-        color: 'white',
-        border: 'none',
-        padding: '14px',
-        borderRadius: '4px',
-        cursor: 'pointer',
-        fontSize: '18px',
-        transition: 'background-color 0.2s',
-    },
-    listContainer: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-    },
-};
+/* --- Global Reset and Body Styling (Black & Blush Theme) --- */
+body, html {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--color-black); /* Deep black background */
+    color: var(--color-light-gray); /* Light text for high contrast */
+}
 
-export default App;
+/* --- App Container --- */
+.App {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    min-height: 100vh;
+}
+
+.app-title {
+    color: var(--color-blush);
+    margin-bottom: 30px;
+    font-size: 2.5em;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.todo-container {
+    background-color: var(--color-dark-gray);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 650px;
+}
+
+/* --- Task Input Form --- */
+.task-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.task-form input[type="text"],
+.task-form textarea {
+    padding: 12px;
+    border: 1px solid var(--color-blush);
+    border-radius: 6px;
+    background-color: var(--color-black);
+    color: var(--color-white);
+    font-size: 1em;
+}
+
+.task-form input[type="text"]::placeholder,
+.task-form textarea::placeholder {
+    color: #888;
+}
+
+.task-form button {
+    background-color: var(--color-blush);
+    color: var(--color-black);
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.task-form button:hover {
+    background-color: #ff85c0;
+}
+
+/* --- Task List and Item Styling --- */
+.task-list {
+    list-style: none;
+    padding: 0;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--color-black);
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    transition: background-color 0.2s, opacity 0.3s;
+    border-left: 5px solid var(--color-blush);
+}
+
+.task-item:hover {
+    background-color: #383838;
+}
+
+.task-item.completed {
+    opacity: 0.6;
+    border-left: 5px solid var(--color-success);
+}
+
+.task-item.completed h3,
+.task-item.completed p {
+    text-decoration: line-through;
+    color: #999;
+}
+
+.task-content {
+    flex-grow: 1;
+    margin-left: 15px;
+    margin-right: 20px;
+}
+
+.task-content h3 {
+    margin: 0 0 4px 0;
+    font-size: 1.1em;
+    color: var(--color-white);
+}
+
+.task-content p {
+    margin: 0;
+    font-size: 0.9em;
+    color: var(--color-light-gray);
+}
+
+/* Checkbox Styling */
+.task-item input[type="checkbox"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--color-blush);
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    outline: none;
+    flex-shrink: 0;
+}
+
+.task-item input[type="checkbox"]:checked {
+    background-color: var(--color-blush);
+    border-color: var(--color-blush);
+}
+
+.task-item input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--color-black);
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* --- Action Buttons (Delete, Edit, Save) --- */
+.task-actions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.task-actions button {
+    border: none;
+    padding: 8px 12px;
+    margin-left: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    font-weight: 600;
+}
+
+/* Delete Button */
+.task-actions .delete-btn {
+    background-color: var(--color-danger); /* Red */
+    color: var(--color-white);
+}
+
+.task-actions .delete-btn:hover {
+    background-color: #e53935;
+    transform: translateY(-1px);
+}
+
+/* --- Styles for New Edit Functionality --- */
+
+/* Input fields replacing the title and description in edit mode */
+.task-content .edit-title-input {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: var(--color-white);
+    background: var(--color-dark-gray); /* Lighter than task item background */
+    border: 1px solid var(--color-blush);
+    padding: 5px;
+    margin-bottom: 5px;
+    width: 90%;
+    display: block;
+}
+
+.task-content .edit-description-input {
+    font-size: 0.9em;
+    color: var(--color-light-gray);
+    background: var(--color-dark-gray);
+    border: 1px solid #444;
+    padding: 5px;
+    resize: vertical;
+    min-height: 40px;
+    width: 90%;
+    display: block;
+}
+
+/* Edit Button (Blush accent) */
+.task-actions .edit-btn {
+    background-color: var(--color-blush);
+    color: var(--color-black);
+}
+
+.task-actions .edit-btn:hover {
+    background-color: #ff85c0;
+    transform: translateY(-1px);
+}
+
+/* Save Button (Success color) */
+.task-actions .save-btn {
+    background-color: var(--color-success);
+    color: var(--color-white);
+}
+
+.task-actions .save-btn:hover {
+    background-color: #6aab70;
+    transform: translateY(-1px);
+}
+
+/* Style for disabled inputs/buttons while editing */
+input[disabled], button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Error Handling */
+.error-message {
+    color: var(--color-danger);
+    margin-top: 20px;
+    font-size: 1.1em;
+}
