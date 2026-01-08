@@ -149,20 +149,6 @@ Base URL: `/api/tasks/`
 ![Completed Task](assets/Screenshot%202026-01-07%20170159.png)
 
 
-=======
----
-
-### ✏️ Editing & Saving a Task
-![Edit Task](assets/Screenshot%202026-01-07%20170146.png)
-
----
-
-### ✅ Marking Task as Completed & Time Estimation
-![Completed Task](assets/Screenshot%202026-01-07%20170159.png)
-
-
----
-
 ## 7️⃣ Future Improvements
 * Filter tasks by completed / pending status
 * Add user authentication
